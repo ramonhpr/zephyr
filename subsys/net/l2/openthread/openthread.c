@@ -201,8 +201,8 @@ static enum net_verdict openthread_recv(struct net_if *iface,
 	/* Length inc. CRC. */
 	recv_frame.mLength = net_buf_frags_len(pkt->frags);
 	recv_frame.mChannel = platformRadioChannelGet(ot_context->instance);
-	recv_frame.mLqi = net_pkt_ieee802154_lqi(pkt);
-	recv_frame.mRssi = net_pkt_ieee802154_rssi(pkt);
+	recv_frame.mInfo.mRxInfo.mLqi = net_pkt_ieee802154_lqi(pkt);
+	recv_frame.mInfo.mRxInfo.mRssi = net_pkt_ieee802154_rssi(pkt);
 
 #if defined(CONFIG_OPENTHREAD_L2_DEBUG_DUMP_15_4)
 	net_hexdump_frags("Received 802.15.4 frame", pkt, true);

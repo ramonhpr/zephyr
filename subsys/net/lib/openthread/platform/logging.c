@@ -43,6 +43,9 @@ void otPlatLog(otLogLevel aLogLevel, otLogRegion aLogRegion,
 	case OT_LOG_LEVEL_WARN:
 		SYS_LOG_WRN("%s", logString);
 		break;
+	case OT_LOG_LEVEL_NOTE:
+		SYS_LOG_INF("%s", logString);
+		break;
 	case OT_LOG_LEVEL_INFO:
 		SYS_LOG_INF("%s", logString);
 		break;
@@ -53,4 +56,3 @@ void otPlatLog(otLogLevel aLogLevel, otLogRegion aLogRegion,
 		break;
 	}
 }
-

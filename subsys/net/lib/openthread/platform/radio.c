@@ -16,7 +16,7 @@
 #include <stdint.h>
 #include <string.h>
 
-#define SYS_LOG_LEVEL CONFIG_OPENTHREAD_LOG_LEVEL
+#define SYS_LOG_LEVEL CONFIG_OPENTHREAD_L2_LOG_LEVEL
 #define SYS_LOG_DOMAIN "otPlat/radio"
 #include <logging/sys_log.h>
 
@@ -96,7 +96,7 @@ void platformRadioProcess(otInstance *aInstance)
 		radio_api->set_channel(radio_dev, sTransmitFrame.mChannel);
 		radio_api->set_txpower(radio_dev, tx_power);
 
-		if (sTransmitFrame.mIsCcaEnabled) {
+		if (sTransmitFrame.mInfo.mTxInfo.mCsmaCaEnabled) {
 			if (radio_api->cca(radio_dev) ||
 			    radio_api->tx(radio_dev, tx_pkt, tx_payload)) {
 				result = OT_ERROR_CHANNEL_ACCESS_FAILURE;
@@ -127,8 +127,8 @@ void platformRadioProcess(otInstance *aInstance)
 
 				ackPsdu[2] = sTransmitFrame.mPsdu[2];
 				ackFrame.mPsdu = ackPsdu;
-				ackFrame.mLqi = 80;
-				ackFrame.mRssi = -40;
+				ackFrame.mInfo.mRxInfo.mLqi = 80;
+				ackFrame.mInfo.mRxInfo.mRssi = -40;
 				ackFrame.mLength = 5;
 
 				otPlatRadioTxDone(aInstance, &sTransmitFrame,
@@ -379,4 +379,3 @@ otError otPlatRadioSetTransmitPower(otInstance *aInstance, int8_t aPower)
 
 	return OT_ERROR_NONE;
 }
-
