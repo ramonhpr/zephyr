@@ -16,6 +16,7 @@ menuconfig NET_L2_OPENTHREAD
 	depends on CPLUSPLUS
 	depends on REBOOT
 	select OPENTHREAD_PLAT
+	select OPENTHREAD_DHCPV6
 
 if NET_L2_OPENTHREAD
 
@@ -24,6 +25,14 @@ config OPENTHREAD_PLAT
 	depends on NET_L2_OPENTHREAD
 	help
 	  This option enables OpenThread platform
+
+config OPENTHREAD_DHCPV6
+	bool
+	depends on NET_L2_OPENTHREAD
+	help
+		This option enable to use OpenThread DHCPv6 to generate IP to zephyr stack.
+		It won't be need to define the CONFIG_NET_APP_MY_IPV6_ADDR with this option
+		enabled.
 
 if OPENTHREAD_PLAT
 
