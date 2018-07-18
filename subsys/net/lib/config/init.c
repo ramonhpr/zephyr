@@ -169,7 +169,7 @@ static void setup_ipv4(struct net_if *iface)
 #endif /* CONFIG_NET_IPV4 && !CONFIG_NET_DHCPV4 */
 
 #if defined(CONFIG_NET_IPV6)
-#if !defined(CONFIG_NET_APP_MY_IPV6_ADDR)
+#if !defined(CONFIG_NET_APP_MY_IPV6_ADDR) && !defined(CONFIG_OPENTHREAD_DHCPV6)
 #error "You need to define an IPv6 address!"
 #endif
 
@@ -232,6 +232,7 @@ static void setup_ipv6(struct net_if *iface, u32_t flags)
 	struct net_if_addr *ifaddr;
 	u32_t mask = NET_EVENT_IPV6_DAD_SUCCEED;
 
+#if !defined(CONFIG_NET_APP_MY_IPV6_ADDR)
 	if (sizeof(CONFIG_NET_APP_MY_IPV6_ADDR) == 1) {
 		/* Empty address, skip setting ANY address in this case */
 		return;
@@ -242,6 +243,7 @@ static void setup_ipv6(struct net_if *iface, u32_t flags)
 		/* some interfaces may add IP address later */
 		mask |= NET_EVENT_IPV6_ADDR_ADD;
 	}
+#endif
 
 	if (flags & NET_CONFIG_NEED_ROUTER) {
 		mask |= NET_EVENT_IPV6_ROUTER_ADD;

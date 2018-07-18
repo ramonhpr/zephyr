@@ -70,22 +70,20 @@ void pkt_list_remove_last(struct openthread_context *context)
 
 void add_ipv6_addr_to_zephyr(struct openthread_context *context)
 {
-	const otNetifAddress *address;
+	const otIp6Address *address;
 
-	for (address = otIp6GetUnicastAddresses(context->instance);
-	     address; address = address->mNext) {
+	address = otThreadGetMeshLocalEid(context->instance);
 #if CONFIG_OPENTHREAD_L2_LOG_LEVEL == SYS_LOG_LEVEL_DEBUG
-		char buf[NET_IPV6_ADDR_LEN];
+	char buf[NET_IPV6_ADDR_LEN];
 
-		NET_DBG("Adding %s",
-			net_addr_ntop(AF_INET6,
-				      (struct in6_addr *)(&address->mAddress),
-				      buf, sizeof(buf)));
+	NET_DBG("Adding %s",
+		net_addr_ntop(AF_INET6,
+			      (struct in6_addr *)address,
+			      buf, sizeof(buf)));
 #endif
-		net_if_ipv6_addr_add(context->iface,
-				     (struct in6_addr *)(&address->mAddress),
-				     NET_ADDR_ANY, 0);
-	}
+	net_if_ipv6_addr_add(context->iface,
+			     (struct in6_addr *)address,
+			     NET_ADDR_ANY, 0);
 }
 
 void add_ipv6_addr_to_ot(struct openthread_context *context)
