@@ -33,7 +33,7 @@ static struct sockaddr_in6 peer_addr = {
 
 static struct net_context *context;
 
-static const char * const test_path[] = { "test", NULL };
+static const char * const test_path[] = { "basic", NULL };
 
 /* define semaphores */
 K_SEM_DEFINE(coap_sem, 0, 1);
@@ -140,19 +140,30 @@ static void send_coap_request(u8_t method)
 end:
 	net_pkt_unref(pkt);
 }
-
+char buf[NET_IPV6_ADDR_LEN];
 static int init_app(void)
 {
 	struct sockaddr_in6 my_addr;
-	int r;
+	int r, i;
+	struct net_if_ipv6 *ipv6;
+	struct net_if *iface = net_if_get_default();
 
+	NET_ERR("Init app");
+	if (iface) {
+		if (net_if_config_ipv6_get(iface, &ipv6)) {
+			NET_ERR("Cannot allocate IPv6 address");
+			return -1;
+		}
+	}
+
+#if 0
 	if (net_addr_pton(AF_INET6, CONFIG_NET_APP_MY_IPV6_ADDR,
 			  &my_addr.sin6_addr)) {
 		NET_ERR("Invalid my IPv6 address: %s",
 			CONFIG_NET_APP_MY_IPV6_ADDR);
 		return -1;
 	}
-
+#endif
 	if (net_addr_pton(AF_INET6, CONFIG_NET_APP_PEER_IPV6_ADDR,
 			  &peer_addr.sin6_addr)) {
 		NET_ERR("Invalid peer IPv6 address: %s",
@@ -168,12 +179,24 @@ static int init_app(void)
 
 	my_addr.sin6_family = AF_INET6;
 
-	r = net_context_bind(context, (struct sockaddr *) &my_addr,
-			     sizeof(my_addr));
-	if (r) {
-		NET_ERR("Could not bind the context");
-		return r;
+	for (i = NET_IF_MAX_IPV6_ADDR - 1; i >= 0; i--) {
+		if (ipv6->unicast[i].is_used) {
+			memcpy(&my_addr.sin6_addr,
+					&ipv6->unicast[i].address.in6_addr,
+					sizeof(my_addr.sin6_addr));
+			NET_ERR("my_addr: %s", net_addr_ntop(AF_INET6,
+								&my_addr.sin6_addr, buf,
+								sizeof(buf)));
+			r = net_context_bind(context, (struct sockaddr *) &my_addr,
+						sizeof(my_addr));
+			if (r) {
+				NET_ERR("Could not bind the context");
+				// return r;
+			}
+		}
 	}
+	if (r)
+		return r;
 
 	r = net_context_recv(context, udp_receive, 0, NULL);
 	if (r) {
@@ -187,29 +210,29 @@ static int init_app(void)
 void main(void)
 {
 	int r;
-
+	NET_ERR("call init app");
 	r = init_app();
 	if (r < 0) {
 		return;
 	}
 
 	/* Test CoAP GET method */
-	NET_DBG("CoAP client GET test");
+	NET_ERR("CoAP client GET test");
 	send_coap_request(COAP_METHOD_GET);
 
 	/* Take semaphore */
 	k_sem_take(&coap_sem, K_FOREVER);
 
 	/* Test CoAP PUT method */
-	NET_DBG("CoAP client PUT test");
+	NET_ERR("CoAP client PUT test");
 	send_coap_request(COAP_METHOD_PUT);
 
 	/* Take semaphore */
 	k_sem_take(&coap_sem, K_FOREVER);
 
 	/* Test CoAP POST method*/
-	NET_DBG("CoAP client POST test");
+	NET_ERR("CoAP client POST test");
 	send_coap_request(COAP_METHOD_POST);
 
-	NET_DBG("Done");
+	NET_ERR("Done");
 }
