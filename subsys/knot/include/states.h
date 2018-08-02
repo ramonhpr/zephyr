@@ -18,4 +18,6 @@ enum knot_state {
 	STATE_ERROR
 };
 
+u8_t knot_get_state();
+char *knot_state2str(u8_t state);
 #endif // __KNOT_STATE_H
