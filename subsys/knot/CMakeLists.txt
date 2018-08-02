@@ -138,3 +138,4 @@ set_target_properties(${knot_lib} PROPERTIES IMPORTED_LOCATION
 
 zephyr_append_cmake_library(${knot_lib})
 
+add_subdirectory(src)
