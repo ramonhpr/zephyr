@@ -5,6 +5,11 @@ menu "KNoT"
 
 config KNOT
 	bool "Enable KNoT platform"
+	select NETWORKING
+	select NET_APP_SETTINGS
+	select NET_APP_CLIENT
+	select FLASH
+	select FLASH_LAYOUT
 	help
 	  This option enable to use the KNoT protocol
 if KNOT
