@@ -1,0 +1,11 @@
+# Kconfig - FRDM-KL43Z board
+#
+# Copyright (c) 2019, NXP
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config BOARD_FRDM_KL43Z
+	bool "NXP FRDM-KL43Z"
+	depends on SOC_SERIES_KINETIS_KL4X
+	select SOC_PART_NUMBER_MKL43Z128VLH4

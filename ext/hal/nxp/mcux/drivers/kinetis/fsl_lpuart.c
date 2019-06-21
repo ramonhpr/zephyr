@@ -1,9 +1,35 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015-2016, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
  * All rights reserved.
  *
- * SPDX-License-Identifier: BSD-3-Clause
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ *  that the following conditions are met:
+ *
+ * o Redistributions of source code must retain the above copyright notice, this list
+ *   of conditions and the following disclaimer.
+ *
+ * o Redistributions in binary form must reproduce the above copyright notice, this
+ *   list of conditions and the following disclaimer in the documentation and/or
+ *   other materials provided with the distribution.
+ *
+ * o Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "fsl_lpuart.h"
@@ -52,7 +78,7 @@ static bool LPUART_TransferIsRxRingBufferFull(LPUART_Type *base, lpuart_handle_t
  * finished.
  *
  * @param base LPUART peripheral base address.
- * @param data Start address of the data to write.
+ * @param data Start addresss of the data to write.
  * @param length Size of the buffer to be sent.
  */
 static void LPUART_WriteNonBlocking(LPUART_Type *base, const uint8_t *data, size_t length);
@@ -64,7 +90,7 @@ static void LPUART_WriteNonBlocking(LPUART_Type *base, const uint8_t *data, size
  * sure the RX register is full or TX FIFO has data before calling this function.
  *
  * @param base LPUART peripheral base address.
- * @param data Start address of the buffer to store the received data.
+ * @param data Start addresss of the buffer to store the received data.
  * @param length Size of the buffer.
  */
 static void LPUART_ReadNonBlocking(LPUART_Type *base, uint8_t *data, size_t length);
@@ -100,12 +126,6 @@ static lpuart_isr_t s_lpuartIsr;
 /*******************************************************************************
  * Code
  ******************************************************************************/
-/*!
- * brief Get the LPUART instance from peripheral base address.
- *
- * param base LPUART peripheral base address.
- * return LPUART instance.
- */
 uint32_t LPUART_GetInstance(LPUART_Type *base)
 {
     uint32_t instance;
@@ -124,12 +144,6 @@ uint32_t LPUART_GetInstance(LPUART_Type *base)
     return instance;
 }
 
-/*!
- * brief Get the length of received data in RX ring buffer.
- *
- * userData handle LPUART handle pointer.
- * return Length of received data in RX ring buffer.
- */
 size_t LPUART_TransferGetRxRingBufferLength(LPUART_Type *base, lpuart_handle_t *handle)
 {
     assert(handle);
@@ -209,30 +223,6 @@ static void LPUART_ReadNonBlocking(LPUART_Type *base, uint8_t *data, size_t leng
     }
 }
 
-/*!
- * brief Initializes an LPUART instance with the user configuration structure and the peripheral clock.
- *
- * This function configures the LPUART module with user-defined settings. Call the LPUART_GetDefaultConfig() function
- * to configure the configuration structure and get the default configuration.
- * The example below shows how to use this API to configure the LPUART.
- * code
- *  lpuart_config_t lpuartConfig;
- *  lpuartConfig.baudRate_Bps = 115200U;
- *  lpuartConfig.parityMode = kLPUART_ParityDisabled;
- *  lpuartConfig.dataBitsCount = kLPUART_EightDataBits;
- *  lpuartConfig.isMsb = false;
- *  lpuartConfig.stopBitCount = kLPUART_OneStopBit;
- *  lpuartConfig.txFifoWatermark = 0;
- *  lpuartConfig.rxFifoWatermark = 1;
- *  LPUART_Init(LPUART1, &lpuartConfig, 20000000U);
- * endcode
- *
- * param base LPUART peripheral base address.
- * param config Pointer to a user-defined configuration structure.
- * param srcClock_Hz LPUART clock source frequency in HZ.
- * retval kStatus_LPUART_BaudrateNotSupport Baudrate is not support in current clock source.
- * retval kStatus_Success LPUART initialize succeed
- */
 status_t LPUART_Init(LPUART_Type *base, const lpuart_config_t *config, uint32_t srcClock_Hz)
 {
     assert(config);
@@ -442,13 +432,6 @@ status_t LPUART_Init(LPUART_Type *base, const lpuart_config_t *config, uint32_t 
 
     return kStatus_Success;
 }
-/*!
- * brief Deinitializes a LPUART instance.
- *
- * This function waits for transmit to complete, disables TX and RX, and disables the LPUART clock.
- *
- * param base LPUART peripheral base address.
- */
 void LPUART_Deinit(LPUART_Type *base)
 {
     uint32_t temp;
@@ -459,7 +442,7 @@ void LPUART_Deinit(LPUART_Type *base)
     {
     }
 #endif
-    /* Wait last char shift out */
+    /* Wait last char shoft out */
     while (0 == (base->STAT & LPUART_STAT_TC_MASK))
     {
     }
@@ -494,31 +477,9 @@ void LPUART_Deinit(LPUART_Type *base)
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
 }
 
-/*!
- * brief Gets the default configuration structure.
- *
- * This function initializes the LPUART configuration structure to a default value. The default
- * values are:
- *   lpuartConfig->baudRate_Bps = 115200U;
- *   lpuartConfig->parityMode = kLPUART_ParityDisabled;
- *   lpuartConfig->dataBitsCount = kLPUART_EightDataBits;
- *   lpuartConfig->isMsb = false;
- *   lpuartConfig->stopBitCount = kLPUART_OneStopBit;
- *   lpuartConfig->txFifoWatermark = 0;
- *   lpuartConfig->rxFifoWatermark = 1;
- *   lpuartConfig->rxIdleType = kLPUART_IdleTypeStartBit;
- *   lpuartConfig->rxIdleConfig = kLPUART_IdleCharacter1;
- *   lpuartConfig->enableTx = false;
- *   lpuartConfig->enableRx = false;
- *
- * param config Pointer to a configuration structure.
- */
 void LPUART_GetDefaultConfig(lpuart_config_t *config)
 {
     assert(config);
-
-    /* Initializes the configure structure to zero. */
-    memset(config, 0, sizeof(*config));
 
     config->baudRate_Bps = 115200U;
     config->parityMode = kLPUART_ParityDisabled;
@@ -543,21 +504,6 @@ void LPUART_GetDefaultConfig(lpuart_config_t *config)
     config->enableRx = false;
 }
 
-/*!
- * brief Sets the LPUART instance baudrate.
- *
- * This function configures the LPUART module baudrate. This function is used to update
- * the LPUART module baudrate after the LPUART module is initialized by the LPUART_Init.
- * code
- *  LPUART_SetBaudRate(LPUART1, 115200U, 20000000U);
- * endcode
- *
- * param base LPUART peripheral base address.
- * param baudRate_Bps LPUART baudrate to be set.
- * param srcClock_Hz LPUART clock source frequency in HZ.
- * retval kStatus_LPUART_BaudrateNotSupport Baudrate is not supported in the current clock source.
- * retval kStatus_Success Set baudrate succeeded.
- */
 status_t LPUART_SetBaudRate(LPUART_Type *base, uint32_t baudRate_Bps, uint32_t srcClock_Hz)
 {
     assert(baudRate_Bps);
@@ -643,19 +589,6 @@ status_t LPUART_SetBaudRate(LPUART_Type *base, uint32_t baudRate_Bps, uint32_t s
     }
 }
 
-/*!
- * brief Enables LPUART interrupts according to a provided mask.
- *
- * This function enables the LPUART interrupts according to a provided mask. The mask
- * is a logical OR of enumeration members. See the ref _lpuart_interrupt_enable.
- * This examples shows how to enable TX empty interrupt and RX full interrupt:
- * code
- *     LPUART_EnableInterrupts(LPUART1,kLPUART_TxDataRegEmptyInterruptEnable | kLPUART_RxDataRegFullInterruptEnable);
- * endcode
- *
- * param base LPUART peripheral base address.
- * param mask The interrupts to enable. Logical OR of ref _uart_interrupt_enable.
- */
 void LPUART_EnableInterrupts(LPUART_Type *base, uint32_t mask)
 {
     base->BAUD |= ((mask << 8) & (LPUART_BAUD_LBKDIE_MASK | LPUART_BAUD_RXEDGIE_MASK));
@@ -667,19 +600,6 @@ void LPUART_EnableInterrupts(LPUART_Type *base, uint32_t mask)
     base->CTRL |= mask;
 }
 
-/*!
- * brief Disables  LPUART interrupts according to a provided mask.
- *
- * This function disables the LPUART interrupts according to a provided mask. The mask
- * is a logical OR of enumeration members. See ref _lpuart_interrupt_enable.
- * This example shows how to disable the TX empty interrupt and RX full interrupt:
- * code
- *     LPUART_DisableInterrupts(LPUART1,kLPUART_TxDataRegEmptyInterruptEnable | kLPUART_RxDataRegFullInterruptEnable);
- * endcode
- *
- * param base LPUART peripheral base address.
- * param mask The interrupts to disable. Logical OR of ref _lpuart_interrupt_enable.
- */
 void LPUART_DisableInterrupts(LPUART_Type *base, uint32_t mask)
 {
     base->BAUD &= ~((mask << 8) & (LPUART_BAUD_LBKDIE_MASK | LPUART_BAUD_RXEDGIE_MASK));
@@ -691,26 +611,6 @@ void LPUART_DisableInterrupts(LPUART_Type *base, uint32_t mask)
     base->CTRL &= ~mask;
 }
 
-/*!
- * brief Gets enabled LPUART interrupts.
- *
- * This function gets the enabled LPUART interrupts. The enabled interrupts are returned
- * as the logical OR value of the enumerators ref _lpuart_interrupt_enable. To check
- * a specific interrupt enable status, compare the return value with enumerators
- * in ref _lpuart_interrupt_enable.
- * For example, to check whether the TX empty interrupt is enabled:
- * code
- *     uint32_t enabledInterrupts = LPUART_GetEnabledInterrupts(LPUART1);
- *
- *     if (kLPUART_TxDataRegEmptyInterruptEnable & enabledInterrupts)
- *     {
- *         ...
- *     }
- * endcode
- *
- * param base LPUART peripheral base address.
- * return LPUART interrupt flags which are logical OR of the enumerators in ref _lpuart_interrupt_enable.
- */
 uint32_t LPUART_GetEnabledInterrupts(LPUART_Type *base)
 {
     uint32_t temp;
@@ -723,23 +623,6 @@ uint32_t LPUART_GetEnabledInterrupts(LPUART_Type *base)
     return temp;
 }
 
-/*!
- * brief Gets LPUART status flags.
- *
- * This function gets all LPUART status flags. The flags are returned as the logical
- * OR value of the enumerators ref _lpuart_flags. To check for a specific status,
- * compare the return value with enumerators in the ref _lpuart_flags.
- * For example, to check whether the TX is empty:
- * code
- *     if (kLPUART_TxDataRegEmptyFlag & LPUART_GetStatusFlags(LPUART1))
- *     {
- *         ...
- *     }
- * endcode
- *
- * param base LPUART peripheral base address.
- * return LPUART status flags which are ORed by the enumerators in the _lpuart_flags.
- */
 uint32_t LPUART_GetStatusFlags(LPUART_Type *base)
 {
     uint32_t temp;
@@ -752,25 +635,6 @@ uint32_t LPUART_GetStatusFlags(LPUART_Type *base)
     return temp;
 }
 
-/*!
- * brief Clears status flags with a provided mask.
- *
- * This function clears LPUART status flags with a provided mask. Automatically cleared flags
- * can't be cleared by this function.
- * Flags that can only cleared or set by hardware are:
- *    kLPUART_TxDataRegEmptyFlag, kLPUART_TransmissionCompleteFlag, kLPUART_RxDataRegFullFlag,
- *    kLPUART_RxActiveFlag, kLPUART_NoiseErrorInRxDataRegFlag, kLPUART_ParityErrorInRxDataRegFlag,
- *    kLPUART_TxFifoEmptyFlag,kLPUART_RxFifoEmptyFlag
- * Note: This API should be called when the Tx/Rx is idle, otherwise it takes no effects.
- *
- * param base LPUART peripheral base address.
- * param mask the status flags to be cleared. The user can use the enumerators in the
- *  _lpuart_status_flag_t to do the OR operation and get the mask.
- * return 0 succeed, others failed.
- * retval kStatus_LPUART_FlagCannotClearManually The flag can't be cleared by this function but
- *         it is cleared automatically by hardware.
- * retval kStatus_Success Status in the mask are cleared.
- */
 status_t LPUART_ClearStatusFlags(LPUART_Type *base, uint32_t mask)
 {
     uint32_t temp;
@@ -812,20 +676,6 @@ status_t LPUART_ClearStatusFlags(LPUART_Type *base, uint32_t mask)
     return status;
 }
 
-/*!
- * brief Writes to the transmitter register using a blocking method.
- *
- * This function polls the transmitter register, waits for the register to be empty or  for TX FIFO to have
- * room, and writes data to the transmitter buffer.
- *
- * note This function does not check whether all data has been sent out to the bus.
- * Before disabling the transmitter, check the kLPUART_TransmissionCompleteFlag to ensure that the transmit is
- * finished.
- *
- * param base LPUART peripheral base address.
- * param data Start address of the data to write.
- * param length Size of the data to write.
- */
 void LPUART_WriteBlocking(LPUART_Type *base, const uint8_t *data, size_t length)
 {
     assert(data);
@@ -841,21 +691,6 @@ void LPUART_WriteBlocking(LPUART_Type *base, const uint8_t *data, size_t length)
     }
 }
 
-/*!
-* brief Reads the receiver data register using a blocking method.
- *
- * This function polls the receiver register, waits for the receiver register full or receiver FIFO
- * has data, and reads data from the TX register.
- *
- * param base LPUART peripheral base address.
- * param data Start address of the buffer to store the received data.
- * param length Size of the buffer.
- * retval kStatus_LPUART_RxHardwareOverrun Receiver overrun happened while receiving data.
- * retval kStatus_LPUART_NoiseError Noise error happened while receiving data.
- * retval kStatus_LPUART_FramingError Framing error happened while receiving data.
- * retval kStatus_LPUART_ParityError Parity error happened while receiving data.
- * retval kStatus_Success Successfully received all data.
- */
 status_t LPUART_ReadBlocking(LPUART_Type *base, uint8_t *data, size_t length)
 {
     assert(data);
@@ -918,24 +753,6 @@ status_t LPUART_ReadBlocking(LPUART_Type *base, uint8_t *data, size_t length)
     return kStatus_Success;
 }
 
-/*!
- * brief Initializes the LPUART handle.
- *
- * This function initializes the LPUART handle, which can be used for other LPUART
- * transactional APIs. Usually, for a specified LPUART instance,
- * call this API once to get the initialized handle.
- *
- * The LPUART driver supports the "background" receiving, which means that user can set up
- * an RX ring buffer optionally. Data received is stored into the ring buffer even when the
- * user doesn't call the LPUART_TransferReceiveNonBlocking() API. If there is already data received
- * in the ring buffer, the user can get the received data from the ring buffer directly.
- * The ring buffer is disabled if passing NULL as p ringBuffer.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- * param callback Callback function.
- * param userData User data.
- */
 void LPUART_TransferCreateHandle(LPUART_Type *base,
                                  lpuart_handle_t *handle,
                                  lpuart_transfer_callback_t callback,
@@ -983,23 +800,6 @@ void LPUART_TransferCreateHandle(LPUART_Type *base,
 #endif
 }
 
-/*!
- * brief Sets up the RX ring buffer.
- *
- * This function sets up the RX ring buffer to a specific UART handle.
- *
- * When the RX ring buffer is used, data received is stored into the ring buffer even when
- * the user doesn't call the UART_TransferReceiveNonBlocking() API. If there is already data received
- * in the ring buffer, the user can get the received data from the ring buffer directly.
- *
- * note When using RX ring buffer, one byte is reserved for internal use. In other
- * words, if p ringBufferSize is 32, then only 31 bytes are used for saving data.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- * param ringBuffer Start address of ring buffer for background receiving. Pass NULL to disable the ring buffer.
- * param ringBufferSize size of the ring buffer.
- */
 void LPUART_TransferStartRingBuffer(LPUART_Type *base,
                                     lpuart_handle_t *handle,
                                     uint8_t *ringBuffer,
@@ -1018,14 +818,6 @@ void LPUART_TransferStartRingBuffer(LPUART_Type *base,
     LPUART_EnableInterrupts(base, kLPUART_RxDataRegFullInterruptEnable | kLPUART_RxOverrunInterruptEnable);
 }
 
-/*!
- * brief Aborts the background transfer and uninstalls the ring buffer.
- *
- * This function aborts the background transfer and uninstalls the ring buffer.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- */
 void LPUART_TransferStopRingBuffer(LPUART_Type *base, lpuart_handle_t *handle)
 {
     assert(handle);
@@ -1041,25 +833,6 @@ void LPUART_TransferStopRingBuffer(LPUART_Type *base, lpuart_handle_t *handle)
     handle->rxRingBufferTail = 0U;
 }
 
-/*!
- * brief Transmits a buffer of data using the interrupt method.
- *
- * This function send data using an interrupt method. This is a non-blocking function, which
- * returns directly without waiting for all data written to the transmitter register. When
- * all data is written to the TX register in the ISR, the LPUART driver calls the callback
- * function and passes the ref kStatus_LPUART_TxIdle as status parameter.
- *
- * note The kStatus_LPUART_TxIdle is passed to the upper layer when all data are written
- * to the TX register. However, there is no check to ensure that all the data sent out. Before disabling the TX,
- * check the kLPUART_TransmissionCompleteFlag to ensure that the transmit is finished.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- * param xfer LPUART transfer structure, see #lpuart_transfer_t.
- * retval kStatus_Success Successfully start the data transmission.
- * retval kStatus_LPUART_TxBusy Previous transmission still not finished, data not all written to the TX register.
- * retval kStatus_InvalidArgument Invalid argument.
- */
 status_t LPUART_TransferSendNonBlocking(LPUART_Type *base, lpuart_handle_t *handle, lpuart_transfer_t *xfer)
 {
     assert(handle);
@@ -1081,7 +854,7 @@ status_t LPUART_TransferSendNonBlocking(LPUART_Type *base, lpuart_handle_t *hand
         handle->txDataSizeAll = xfer->dataSize;
         handle->txState = kLPUART_TxBusy;
 
-        /* Enable transmitter interrupt. */
+        /* Enable transmiter interrupt. */
         LPUART_EnableInterrupts(base, kLPUART_TxDataRegEmptyInterruptEnable);
 
         status = kStatus_Success;
@@ -1090,15 +863,6 @@ status_t LPUART_TransferSendNonBlocking(LPUART_Type *base, lpuart_handle_t *hand
     return status;
 }
 
-/*!
- * brief Aborts the interrupt-driven data transmit.
- *
- * This function aborts the interrupt driven data sending. The user can get the remainBtyes to find out
- * how many bytes are not sent out.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- */
 void LPUART_TransferAbortSend(LPUART_Type *base, lpuart_handle_t *handle)
 {
     assert(handle);
@@ -1109,19 +873,6 @@ void LPUART_TransferAbortSend(LPUART_Type *base, lpuart_handle_t *handle)
     handle->txState = kLPUART_TxIdle;
 }
 
-/*!
- * brief Gets the number of bytes that have been written to the LPUART transmitter register.
- *
- * This function gets the number of bytes that have been written to LPUART TX
- * register by an interrupt method.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- * param count Send bytes count.
- * retval kStatus_NoTransferInProgress No send in progress.
- * retval kStatus_InvalidArgument Parameter is invalid.
- * retval kStatus_Success Get successfully through the parameter \p count;
- */
 status_t LPUART_TransferGetSendCount(LPUART_Type *base, lpuart_handle_t *handle, uint32_t *count)
 {
     assert(handle);
@@ -1137,32 +888,6 @@ status_t LPUART_TransferGetSendCount(LPUART_Type *base, lpuart_handle_t *handle,
     return kStatus_Success;
 }
 
-/*!
- * brief Receives a buffer of data using the interrupt method.
- *
- * This function receives data using an interrupt method. This is a non-blocking function
- * which returns without waiting to ensure that all data are received.
- * If the RX ring buffer is used and not empty, the data in the ring buffer is copied and
- * the parameter p receivedBytes shows how many bytes are copied from the ring buffer.
- * After copying, if the data in the ring buffer is not enough for read, the receive
- * request is saved by the LPUART driver. When the new data arrives, the receive request
- * is serviced first. When all data is received, the LPUART driver notifies the upper layer
- * through a callback function and passes a status parameter ref kStatus_UART_RxIdle.
- * For example, the upper layer needs 10 bytes but there are only 5 bytes in ring buffer.
- * The 5 bytes are copied to xfer->data, which returns with the
- * parameter p receivedBytes set to 5. For the remaining 5 bytes, the newly arrived data is
- * saved from xfer->data[5]. When 5 bytes are received, the LPUART driver notifies the upper layer.
- * If the RX ring buffer is not enabled, this function enables the RX and RX interrupt
- * to receive data to xfer->data. When all data is received, the upper layer is notified.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- * param xfer LPUART transfer structure, see #uart_transfer_t.
- * param receivedBytes Bytes received from the ring buffer directly.
- * retval kStatus_Success Successfully queue the transfer into the transmit queue.
- * retval kStatus_LPUART_RxBusy Previous receive request is not finished.
- * retval kStatus_InvalidArgument Invalid argument.
- */
 status_t LPUART_TransferReceiveNonBlocking(LPUART_Type *base,
                                            lpuart_handle_t *handle,
                                            lpuart_transfer_t *xfer,
@@ -1279,15 +1004,6 @@ status_t LPUART_TransferReceiveNonBlocking(LPUART_Type *base,
     return status;
 }
 
-/*!
- * brief Aborts the interrupt-driven data receiving.
- *
- * This function aborts the interrupt-driven data receiving. The user can get the remainBytes to find out
- * how many bytes not received yet.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- */
 void LPUART_TransferAbortReceive(LPUART_Type *base, lpuart_handle_t *handle)
 {
     assert(handle);
@@ -1304,18 +1020,6 @@ void LPUART_TransferAbortReceive(LPUART_Type *base, lpuart_handle_t *handle)
     handle->rxState = kLPUART_RxIdle;
 }
 
-/*!
- * brief Gets the number of bytes that have been received.
- *
- * This function gets the number of bytes that have been received.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- * param count Receive bytes count.
- * retval kStatus_NoTransferInProgress No receive in progress.
- * retval kStatus_InvalidArgument Parameter is invalid.
- * retval kStatus_Success Get successfully through the parameter \p count;
- */
 status_t LPUART_TransferGetReceiveCount(LPUART_Type *base, lpuart_handle_t *handle, uint32_t *count)
 {
     assert(handle);
@@ -1331,25 +1035,15 @@ status_t LPUART_TransferGetReceiveCount(LPUART_Type *base, lpuart_handle_t *hand
     return kStatus_Success;
 }
 
-/*!
- * brief LPUART IRQ handle function.
- *
- * This function handles the LPUART transmit and receive IRQ request.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- */
 void LPUART_TransferHandleIRQ(LPUART_Type *base, lpuart_handle_t *handle)
 {
     assert(handle);
 
     uint8_t count;
     uint8_t tempCount;
-    uint32_t status = LPUART_GetStatusFlags(base);
-    uint32_t enabledInterrupts = LPUART_GetEnabledInterrupts(base);
 
     /* If RX overrun. */
-    if (kLPUART_RxOverrunFlag & status)
+    if (LPUART_STAT_OR_MASK & base->STAT)
     {
         /* Clear overrun flag, otherwise the RX does not work. */
         base->STAT = ((base->STAT & 0x3FE00000U) | LPUART_STAT_OR_MASK);
@@ -1362,7 +1056,7 @@ void LPUART_TransferHandleIRQ(LPUART_Type *base, lpuart_handle_t *handle)
     }
 
     /* If IDLE flag is set and the IDLE interrupt is enabled. */
-    if ((kLPUART_IdleLineFlag & status) && (kLPUART_IdleLineInterruptEnable & enabledInterrupts))
+    if ((LPUART_STAT_IDLE_MASK & base->STAT) && (LPUART_CTRL_ILIE_MASK & base->CTRL))
     {
 #if defined(FSL_FEATURE_LPUART_HAS_FIFO) && FSL_FEATURE_LPUART_HAS_FIFO
         count = ((uint8_t)((base->WATER & LPUART_WATER_RXCOUNT_MASK) >> LPUART_WATER_RXCOUNT_SHIFT));
@@ -1405,7 +1099,7 @@ void LPUART_TransferHandleIRQ(LPUART_Type *base, lpuart_handle_t *handle)
         }
     }
     /* Receive data register full */
-    if ((kLPUART_RxDataRegFullFlag & status) && (kLPUART_RxDataRegFullInterruptEnable & enabledInterrupts))
+    if ((LPUART_STAT_RDRF_MASK & base->STAT) && (LPUART_CTRL_RIE_MASK & base->CTRL))
     {
 /* Get the size that can be stored into buffer for this interrupt. */
 #if defined(FSL_FEATURE_LPUART_HAS_FIFO) && FSL_FEATURE_LPUART_HAS_FIFO
@@ -1505,7 +1199,7 @@ void LPUART_TransferHandleIRQ(LPUART_Type *base, lpuart_handle_t *handle)
     }
 
     /* Send data register empty and the interrupt is enabled. */
-    if ((kLPUART_TxDataRegEmptyFlag & status) && (kLPUART_TxDataRegEmptyInterruptEnable & enabledInterrupts))
+    if ((base->STAT & LPUART_STAT_TDRE_MASK) && (base->CTRL & LPUART_CTRL_TIE_MASK))
     {
 /* Get the bytes that available at this moment. */
 #if defined(FSL_FEATURE_LPUART_HAS_FIFO) && FSL_FEATURE_LPUART_HAS_FIFO
@@ -1547,14 +1241,6 @@ void LPUART_TransferHandleIRQ(LPUART_Type *base, lpuart_handle_t *handle)
     }
 }
 
-/*!
- * brief LPUART Error IRQ handle function.
- *
- * This function handles the LPUART error IRQ request.
- *
- * param base LPUART peripheral base address.
- * param handle LPUART handle pointer.
- */
 void LPUART_TransferHandleErrorIRQ(LPUART_Type *base, lpuart_handle_t *handle)
 {
     /* To be implemented by User. */
